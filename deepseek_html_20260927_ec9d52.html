@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Locket Gold Panel</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+  body {
+    min-height: 100vh;
+    background: radial-gradient(circle at 20% 20%, #1a1f3a 0%, #0a0d1a 60%);
+    color: #e8ecff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: rgba(20, 26, 48, 0.85);
+    border: 1px solid rgba(120, 140, 255, 0.25);
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06);
+    backdrop-filter: blur(14px);
+  }
+  .logo {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .logo h1 {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8b95c9;
+    font-size: 13px;
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(52, 211, 153, 0.08);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #6ee7b7;
+    margin-bottom: 24px;
+  }
+  .status .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 10px #34d399;
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    color: #8b95c9;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(10, 13, 26, 0.8);
+    border: 1px solid rgba(120, 140, 255, 0.25);
+    border-radius: 12px;
+    color: #e8ecff;
+    font-size: 15px;
+    outline: none;
+    transition: 0.2s;
+    margin-bottom: 18px;
+  }
+  input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+  }
+  button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    color: white;
+    transition: 0.2s;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.35);
+  }
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(99, 102, 241, 0.5);
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .result {
+    margin-top: 22px;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    display: none;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .result.ok { background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.4); color: #6ee7b7; display: block; }
+  .result.err { background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.4); color: #fca5a5; display: block; }
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 12px;
+    color: #4b5578;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo"><h1>LOCKET GOLD</h1></div>
+    <div class="subtitle">By Ziokatz X Ngocquynh066</div>
+
+    <div class="status">
+      <span class="dot"></span>
+      <span id="statusText">System Online</span>
+    </div>
+
+    {% if not authed %}
+    <label>API Key</label>
+    <input type="password" id="apiKey" placeholder="Nhập API Key để truy cập">
+    <button onclick="unlock()">Unlock</button>
+    {% else %}
+    <label>Username / Link Locket</label>
+    <input type="text" id="username" placeholder="VD: ngocquynh066 hoặc https://locket.cam/...">
+    <button id="btnInject" onclick="inject()">KÍCH HOẠT GOLD</button>
+    <div class="result" id="result"></div>
+    {% endif %}
+
+    <div class="footer">© 2026 Locket Gold Panel</div>
+  </div>
+
+<script>
+const API_KEY = new URLSearchParams(location.search).get("key") || "";
+
+function unlock() {
+  const key = document.getElementById("apiKey").value.trim();
+  if (!key) return alert("Nhập API Key!");
+  location.href = "/?key=" + encodeURIComponent(key);
+}
+
+async function inject() {
+  const btn = document.getElementById("btnInject");
+  const res = document.getElementById("result");
+  const username = document.getElementById("username").value.trim();
+
+  if (!username) {
+    res.className = "result err";
+    res.textContent = "Vui lòng nhập username hoặc link.";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "ĐANG XỬ LÝ...";
+  res.className = "result";
+  res.style.display = "none";
+
+  try {
+    const r = await fetch("/inject", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": API_KEY
+      },
+      body: JSON.stringify({ username })
+    });
+
+    const data = await r.json();
+
+    if (r.ok && data.success) {
+      res.className = "result ok";
+      res.textContent = "✅ Thành công!\nUID: " + data.uid + "\nHết hạn: " + (data.status?.expires || "N/A");
+    } else {
+      res.className = "result err";
+      res.textContent = "❌ Lỗi: " + (data.error || "Không xác định");
+    }
+  } catch (e) {
+    res.className = "result err";
+    res.textContent = "❌ Lỗi kết nối: " + e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "KÍCH HOẠT GOLD";
+  }
+}
+</script>
+</body>
+</html>
